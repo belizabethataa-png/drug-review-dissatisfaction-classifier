@@ -29,9 +29,9 @@ UCI Machine Learning Repository, [Drug Reviews (Drugs.com)](https://archive.ics.
 The full files are **not included** in this repo because the dataset is licensed for research use only with no redistribution. To reproduce:
 
 1. Download the dataset from the UCI link above.
-2. Put `drugsComTrain_raw.tsv` and `drugsComTest_raw.tsv` in the `data/` folder.
+2. Put `drugsComTrain_raw.tsv` and `drugsComTest_raw.csv` in the `data/` folder.
 
-`data/sample_reviews.tsv` is a 500-row sample for a quick look at the format.
+`data/sample_reviews.csv` is a 500-row sample for a quick look at the format.
 
 ## How to Run
 
@@ -41,13 +41,13 @@ Requires Python 3 with `pandas`, `numpy`, and `scikit-learn` (1.2 or newer).
 pip install pandas numpy scikit-learn
 
 # Full run
-python drug_review_models.py --train data/drugsComTrain_raw.tsv --test data/drugsComTest_raw.tsv
+python drug_review_models.py --train data/drugsComTrain_raw.csv --test data/drugsComTest_raw.csv
 
 # Quick run on a subsample
-python drug_review_models.py --train data/drugsComTrain_raw.tsv --test data/drugsComTest_raw.tsv --sample 30000
+python drug_review_models.py --train data/drugsComTrain_raw.csv --test data/drugsComTest_raw.csv --sample 30000
 
 # Without usefulCount (leakage check)
-python drug_review_models.py --train data/drugsComTrain_raw.tsv --test data/drugsComTest_raw.tsv --drop-useful
+python drug_review_models.py --train data/drugsComTrain_raw.csv --test data/drugsComTest_raw.csv --drop-useful
 ```
 
 Outputs are saved to `results/`:
@@ -61,7 +61,7 @@ Outputs are saved to `results/`:
 ├── README.md
 ├── drug_review_models.py
 ├── data/
-│   └── sample_reviews.tsv
+│   └── sample_reviews.csv
 └── results/
 ```
 
