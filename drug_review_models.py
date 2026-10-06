@@ -16,6 +16,7 @@ Usage
   python drug_review_models.py --train data/drugsComTrain_raw.tsv --test data/drugsComTest_raw.tsv
   python drug_review_models.py --train ... --test ... --sample 30000     # quick run
   python drug_review_models.py --train ... --test ... --drop-useful      # leakage check
+  python drug_review_models.py --train ... --make-sample data/sample_reviews.tsv   # 500-row sample, then exit
 Requires: pandas, numpy, scikit-learn>=1.2
 """
 import argparse
@@ -45,7 +46,11 @@ NEG_CUTOFF = 4  # rating <= 4 -> dissatisfied (target = 1)
 # Data loading and feature engineering
 # --------------------------------------------------------------------------- #
 def load_raw(path):
-    df = pd.read_csv(path, sep="\t")
+    # Works for UCI .tsv (tab-separated) and Kaggle .csv (comma-separated) copies
+    with open(path, "r", encoding="utf-8", errors="replace") as f:
+        header = f.readline()
+    sep = "\t" if header.count("\t") > header.count(",") else ","
+    df = pd.read_csv(path, sep=sep)
     first = df.columns[0]
     if first.startswith("Unnamed") or first == "":
         df = df.rename(columns={first: "uniqueID"})
@@ -168,11 +173,23 @@ def lr_coefficients(model):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--train", required=True)
-    ap.add_argument("--test", required=True)
+    ap.add_argument("--test", default=None)
+    ap.add_argument("--make-sample", default=None, help="write a 500-row sample of --train to this path and exit")
     ap.add_argument("--out", default="results")
     ap.add_argument("--sample", type=int, default=None, help="rows to sample from train for a quick run")
     ap.add_argument("--drop-useful", action="store_true", help="drop usefulCount (possible leakage proxy)")
     args = ap.parse_args()
+
+    if args.make_sample:
+        folder = os.path.dirname(args.make_sample)
+        if folder:
+            os.makedirs(folder, exist_ok=True)
+        load_raw(args.train).sample(500, random_state=RANDOM_STATE).to_csv(
+            args.make_sample, sep="\t", index=False)
+        print(f"Saved 500-row sample to {args.make_sample}")
+        return
+    if not args.test:
+        ap.error("--test is required unless --make-sample is used")
     os.makedirs(args.out, exist_ok=True)
 
     train = add_features(clean(load_raw(args.train)), args.drop_useful)
