@@ -218,4 +218,6 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
-  data/drugsCom*_raw.tsv
+  data/drugsCom*_raw.tsv  
+data/drugsCom*_raw.*
+
