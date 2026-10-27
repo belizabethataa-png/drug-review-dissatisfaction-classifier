@@ -218,6 +218,6 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
-  data/drugsCom*_raw.tsv  
+  # Project data (UCI files are not redistributed)
 data/drugsCom*_raw.*
 
